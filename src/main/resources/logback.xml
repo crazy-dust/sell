@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- scan：属性为true的时候，配置文件如果发生改变，他将会重新被加载
+     scanPeriod: 检测配置文件是否有修改时间的间隔默认单位是毫秒，当scan为true的时候
+     也就是说每隔多久扫描一下看配置文件有没有发生变化，有变化就重新加载配置，这样就不需要我们每做一次配置就要重启服务器了，会自动感知变化
+     debug: 如果设置为true的时候，将会把logback的日志信息打印出来，实时查看logback的运行状态。
+ -->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!-- 定义参数常量 -->
+    <!-- log是分级别显示的：TRACE < DEBUG < INFO < WARN < ERROR -->
+    <!-- logger.trace("msg")  logger.debug.. -->
+    <property name="log.level" value="debug" />
+    <!-- 文件要保留的多长时间 -->
+    <property name="log.maxHistory" value="30" />
+    <!-- 文件输出根路径，catalina.base这个变量里面存储的是Tomcat的实例，它的根目录 -->
+    <!--<property name="log.filePath" value="d://OrderingSystem//testlog" />-->
+    <property name="log.filePath" value="d://OrderingSystem//testlog" />
+
+    <!--<property name="log.filePath" value="d:/logs/webapps" />-->
+    <!-- 日志展现的格式 "%d是时间的格式" -->
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n" />
+
+
+    <!-- 控制台设置
+        appender：告诉输出介质是什么 -->
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 除了将event事件转换为数组，还会将转换后的字节数据输出到文件中去，也就是说它既负责转换成字符串，也负责将日志输出到相应的文件当中 -->
+        <encoder>
+            <Pattern>
+                ${log.pattern}
+            </Pattern>
+        </encoder>
+    </appender>
+
+
+    <!--下面三个appender都是输出到日志文件中的 -->
+        <!-- DEBUG -->
+    <!-- RollingFileAppender：文件会随着其大小的增大，会滚动的新的日志文件来；或者随着时间的推移按天、按月来生成新的日志文件 -->
+    <appender name="debugAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件路径 -->
+        <file>${log.filePath}/debug.log</file>
+        <!-- 滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 文件名称 -->
+            <fileNamePattern>
+                ${log.filePath}/debug/debug.%d{yyyy-MM-dd}.log.gz
+            </fileNamePattern>
+            <!-- 文件最大保存历史数量 -->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+
+        <!-- 输出格式 -->
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+
+        <!-- 过滤掉非DEBUG的信息 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>   <!-- 表示匹配该级别及以上-->
+            <onMismatch>DENY</onMismatch>  <!-- 表示不匹配该级别以下的 -->
+        </filter>
+    </appender>
+
+    <!-- INFO-->
+    <appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件路径 -->
+        <file>${log.filePath}/info.log</file>
+        <!-- 滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 文件名称 -->
+            <fileNamePattern>
+                ${log.filePath}/info/info.%d{yyyy-MM-dd}.log.gz
+            </fileNamePattern>
+            <!-- 文件最大保存历史数量 -->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+
+        <!-- 输出格式 -->
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+
+        <!-- 过滤掉非INFO的信息 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- ERROR -->
+    <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件路径 -->
+        <file>${log.filePath}/error.log</file>
+        <!-- 滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 文件名称 -->
+            <fileNamePattern>
+                ${log.filePath}/error/error.%d{yyyy-MM-dd}.log.gz
+            </fileNamePattern>
+            <!-- 文件最大保存历史数量 -->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+
+        <!-- 输出格式 -->
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+
+        <!-- 过滤掉非INFO的信息 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 存放日志对象, 同时告诉logback是要关注哪一个appender下面的信息 -->
+    <!--
+        name: 指定要关注的项目
+        level: 记录哪一个level以上的信息,这里只记录debug级别以上的信息
+        log是分级别显示的：TRACE < DEBUG < INFO < WARN < ERROR
+
+        addtivity: 会将父类，也就是root下的appender放到自己的范围之内，level也将按照自己的level指定，而不是root指定的level！
+                    是否向上级logger传递打印信息。默认是true。
+    -->
+    <logger name="com.demotwo.sell" level="${log.level}" additivity="true">
+        <!-- 往这3个appender里面输出信息 -->
+        <appender-ref ref="debugAppender" />
+        <appender-ref ref="infoAppender" />
+        <appender-ref ref="errorAppender" />
+    </logger>
+
+    <!-- 父属性 -->
+    <!-- 也是<logger>元素，但是它是根logger。只有一个level属性，因为已经被命名为"root".
+    level:  用来设置打印级别，大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF，不能设置为INHERITED或者同义词NULL。默认是DEBUG。
+    <root>可以包含零个或多个<appender-ref>元素，标识这个appender将会添加到这个logger。 -->
+    <root level="info">
+        <appender-ref ref="consoleAppender" />
+    </root>
+</configuration>

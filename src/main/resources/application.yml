@@ -1,0 +1,49 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1/sell?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false
+    password: root
+    username: root
+  # 在控制台显示Jpa的SQL语句
+  jpa:
+    show-sql: true
+  # json数据中的null值不显示
+  jackson:
+    default-property-inclusion: non_null
+  thymeleaf:
+    cache: false
+    encoding: utf-8
+    mode: HTML5
+    prefix: classpath:/templates/
+    suffix: .ftl
+  redis:
+    host: 127.0.0.1
+    port: 6379
+server:
+  context-path: /sell
+wechat:
+  appid: wx84a99cc4c9a1664f
+  appsecret: 416ac7adcc10e66e17dc85f6fe523fec
+
+  openAppid: 提供微信扫码登录的开放平台提供的appid (需要企业资质才能获取)
+  openSecret:  提供微信扫码登录的开放平台提供的秘钥 (需要企业资质才能获取)
+
+  mchId: 测试商户Id
+  mchkey: 测试商户秘钥
+  mchPath: 测试商户证书路径
+  notifyUrl: /sell/pay/notify
+
+  templateId:
+    orderStatus: 0uOv0R4mZO7nq9orgndc1WwAlRtpqdayx0ZG2Yh1x1A
+
+win:
+  base:
+    path: d://OrderingSystem/images
+linux:
+  base:
+    path: d://OrderingSystem/images
+shop:
+  relevant:
+    path: /upload/
+project:
+  sell: http://localhost:8080
